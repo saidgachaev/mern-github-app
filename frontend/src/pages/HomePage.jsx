@@ -17,21 +17,13 @@ const HomePage = () => {
 	const getUserProfileAndRepos = useCallback(async (username = 'saidgachaev') => {
 		setLoading(true);
 		try {
+			const res = await fetch(`http://localhost:5000/api/users/profile/${username}`);
+			const { repos, userProfile } = await res.json();
 
-			const userRes = await fetch(`https://api.github.com/users/${username}`, {
-				headers: {
-					authorization: `token ${import.meta.env.VITE_GITHUB_API_KEY}`,
-				},
-			});
+			repos.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
 
-			const userProfile = await userRes.json();
-			setUserProfile(userProfile);
-
-			const repoRes = await fetch(userProfile.repos_url);
-			const repos = await repoRes.json();
-
-			repos.sort((a, b) => new Date(b.created_at) - new Date(a.created_at)); //descending, recent first
 			setRepos(repos);
+			setUserProfile(userProfile);
 
 			return { userProfile, repos };
 		} catch (error) {
@@ -62,7 +54,7 @@ const HomePage = () => {
 
 	const onSort = (sortType) => {
 		if (sortType === 'recent') {
-			repos.sort((a, b) => new Date(b.created_at) - new Date(a.created_at)); 
+			repos.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
 		} else if (sortType === 'stars') {
 			repos.sort((a, b) => b.stargazers_count - a.stargazers_count);
 		} else if (sortType === 'forks') {
