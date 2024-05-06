@@ -1,9 +1,8 @@
-import path from 'path';
 import express from 'express';
 import dotenv from 'dotenv';
-import cors from 'cors';
 import passport from 'passport';
 import session from 'express-session';
+import path from 'path';
 
 import './passport/github.auth.js';
 
@@ -20,9 +19,9 @@ const PORT = process.env.PORT || 500;
 const __dirname = path.resolve();
 
 app.use(session({ secret: 'keyboard cat', resave: false, saveUninitialized: false }));
+
 app.use(passport.initialize());
 app.use(passport.session());
-app.use(cors());
 
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
